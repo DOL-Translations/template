@@ -29,5 +29,3 @@ macro TextShiftJIS(OFFSET, TEXT) {
   origin {OFFSET}
   dw {TEXT} // Shift-JIS Text To Print
 }
-
-include "Menus.asm"
