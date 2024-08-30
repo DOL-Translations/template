@@ -2,8 +2,12 @@ endian msb // GameCube PPC requires Big-Endian Encoding (Most Significant Bit)
 output "../output/Template [U].iso", create
 origin $000000; insert "../input/Template [J].iso"
 
+//Note: there is an experimental upgrade to Text() that simplified this process
+
 macro Text(OFFSET, TEXT) {
   map 0, 0, 256 // Map Default ASCII Chars
+  map '\n', 0x0A // End of string
+  //add additional characters here
 
   origin {OFFSET}
   db {TEXT} // ASCII Text To Print
@@ -29,3 +33,24 @@ macro TextShiftJIS(OFFSET, TEXT) {
   origin {OFFSET}
   dw {TEXT} // Shift-JIS Text To Print
 }
+
+macro ReplaceAsset(ORIGIN, FILE, SIZE) {
+  if !file.exists({FILE}) {
+    print "{FILE} doesn't exist!"
+  } else if file.exists({FILE}) {
+    if (file.size({FILE}) > {SIZE} && {SIZE} != -1) {
+      Assert("File {FILE} is bigger than Size {SIZE}")
+    } else if (file.size({FILE}) <= {SIZE}) {
+      origin {ORIGIN}
+      insert {FILE}
+      fill {SIZE} - file.size({FILE})
+    }
+  }
+}
+
+//Region
+Text($3, "E")
+origin $45B; db $01
+
+//include "System.asm"
+//add more source files here
